@@ -2,16 +2,16 @@ use rug::ops::Pow;
 use rug::Integer;
 
 fn odd_primes(n: u32) -> Vec<u32> {
-    let size = ((n - 1) / 2) as usize;
+    let size = ((n - 1) >> 1) as usize;
     let mut is_prime = vec![true; size];
-    let mut primes = Vec::<u32>::new();
+    let mut primes = vec![];
     for k in 0..size {
         if is_prime[k] {
             let p = (2 * k + 3) as u32;
             primes.push(p);
             let mut m = 3 * p;
             while m <= n {
-                is_prime[((m-3)/2) as usize] = false;
+                is_prime[((m - 3) >> 1) as usize] = false;
                 m += 2 * p;
             }
         }
@@ -27,10 +27,9 @@ fn mersenne_number(n: u32) -> Integer {
 fn lucas_lehmer_test(p: u32) -> bool {
     //p must be an odd prime
     let m = mersenne_number(p);
-    let two = Integer::from(2);
     let mut s = Integer::from(4);
     for _ in 1..=p - 2 {
-        s = Integer::from(s.pow(2)) - &two;
+        s = Integer::from(s.pow(2)) - 2;
         if s < 0 {
             s += &m;
         }
@@ -42,7 +41,7 @@ fn lucas_lehmer_test(p: u32) -> bool {
             }
         }
     }
-    s.signum() == 0
+    s == 0
 }
 
 fn main() {
