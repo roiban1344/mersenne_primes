@@ -5,14 +5,14 @@ fn odd_primes(n: u32) -> Vec<u32> {
     let size = ((n - 1) >> 1) as usize;
     let mut is_prime = vec![true; size];
     let mut primes = vec![];
-    for k in 0..size {
-        if is_prime[k] {
-            let p = (2 * k + 3) as u32;
-            primes.push(p);
-            let mut m = 3 * p;
-            while m <= n {
-                is_prime[((m - 3) >> 1) as usize] = false;
-                m += 2 * p;
+    for i in 0..size {
+        if is_prime[i] {
+            let p = 2 * i + 3;
+            primes.push(p as u32);
+            let mut j = 3 * i + 3;
+            while j < size {
+                is_prime[j] = false;
+                j += p;
             }
         }
     }
@@ -20,8 +20,7 @@ fn odd_primes(n: u32) -> Vec<u32> {
 }
 
 fn mersenne_number(n: u32) -> Integer {
-    let one = Integer::from(1);
-    Integer::from(&one << n) - one
+    (Integer::from(1) << n) - 1
 }
 
 fn lucas_lehmer_test(p: u32) -> bool {
@@ -29,12 +28,12 @@ fn lucas_lehmer_test(p: u32) -> bool {
     let m = mersenne_number(p);
     let mut s = Integer::from(4);
     for _ in 1..=p - 2 {
-        s = Integer::from(s.pow(2)) - 2;
+        s = s.pow(2) - 2;
         if s < 0 {
             s += &m;
         }
         while s >= m {
-            s = Integer::from(&s >> p) + Integer::from(&s & &m);
+            s = Integer::from(&s >> p) + Integer::from(s & &m);
             if s == m {
                 s = Integer::from(0);
                 break;
@@ -45,7 +44,7 @@ fn lucas_lehmer_test(p: u32) -> bool {
 }
 
 fn main() {
-    let odd_primes = odd_primes(30000);
+    let odd_primes = odd_primes(10000);
     for p in odd_primes {
         if lucas_lehmer_test(p) {
             println!("{}", p);
