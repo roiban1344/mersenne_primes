@@ -44,7 +44,7 @@ fn lucas_lehmer_test(p: u32) -> bool {
 }
 
 fn main() {
-    let odd_primes = odd_primes(30000);
+    let odd_primes = odd_primes(10000);
     for p in odd_primes {
         if lucas_lehmer_test(p) {
             println!("{}", p);

@@ -1,0 +1,13 @@
+version: "3.9"
+services:
+  primes:
+    build: .
+    container_name: primes
+    tty: true
+    working_dir: /usr/src/packages
+    volumes:
+      - ./packages:/usr/src/packages
+      - /etc/passwd:/etc/passwd:ro
+      - /etc/group:/etc/group:ro
+    environment:
+      CARGO_CARGO_NEW_VCS: none
