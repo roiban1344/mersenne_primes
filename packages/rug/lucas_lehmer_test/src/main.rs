@@ -1,18 +1,19 @@
 use rug::ops::Pow;
 use rug::Integer;
 
-fn odd_primes(n: u32) -> Vec<u32> {
-    let size = ((n - 1) >> 1) as usize;
-    let mut is_prime = vec![true; size];
+//Returns a list of prime numbers less than n.
+fn primes(n: u32) -> Vec<u32> {
+    let mut is_prime = vec![true; n as usize];
     let mut primes = vec![];
-    for i in 0..size {
-        if is_prime[i] {
-            let p = 2 * i + 3;
-            primes.push(p as u32);
-            let mut j = 3 * i + 3;
-            while j < size {
-                is_prime[j] = false;
-                j += p;
+    for i in 2..n {
+        if is_prime[i as usize] {
+            primes.push(i);
+            for j in 2.. {
+                let k = i * j;
+                if !(k < n) {
+                    break;
+                }
+                is_prime[k as usize] = false;
             }
         }
     }
@@ -23,17 +24,15 @@ fn mersenne_number(n: u32) -> Integer {
     (Integer::from(1) << n) - 1
 }
 
+//Executes the Lucas-Lehmer test for p-th Mersenne number.
+//p must be an odd prime number.
 fn lucas_lehmer_test(p: u32) -> bool {
-    //p must be an odd prime
     let m = mersenne_number(p);
     let mut s = Integer::from(4);
-    for _ in 1..=p - 2 {
+    for _ in 2..=p - 1 {
         s = s.pow(2) - 2;
-        if s < 0 {
-            s += &m;
-        }
         while s >= m {
-            s = Integer::from(&s >> p) + Integer::from(s & &m);
+            s = Integer::from(&s >> p) + (s & &m);
             if s == m {
                 s = Integer::from(0);
                 break;
@@ -44,10 +43,14 @@ fn lucas_lehmer_test(p: u32) -> bool {
 }
 
 fn main() {
-    let odd_primes = odd_primes(10000);
-    for p in odd_primes {
-        if lucas_lehmer_test(p) {
-            println!("{}", p);
+    let primes = primes(120000);
+    for p in primes {
+        print!("{},", p);
+        if p != 2 {
+            if lucas_lehmer_test(p) {
+                println!();
+                println!("{}", p);
+            }
         }
     }
 }
