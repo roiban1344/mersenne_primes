@@ -4,18 +4,18 @@ use std::collections::VecDeque;
 
 const MILLER_RABIN_REPS: u32 = 64;
 
-fn odd_primes(n: u32) -> Vec<u32> {
-    let size = ((n - 1) >> 1) as usize;
-    let mut is_prime = vec![true; size];
+fn primes(n: u32) -> Vec<u32> {
+    let mut is_prime = vec![true; n as usize];
     let mut primes = vec![];
-    for i in 0..size {
-        if is_prime[i] {
-            let p = 2 * i + 3;
-            primes.push(p as u32);
-            let mut j = 3 * i + 3;
-            while j < size {
-                is_prime[j] = false;
-                j += p;
+    for i in 2..n {
+        if is_prime[i as usize] {
+            primes.push(i);
+            for j in 2.. {
+                let k = i * j;
+                if !(k < n) {
+                    break;
+                }
+                is_prime[k as usize] = false;
             }
         }
     }
@@ -23,7 +23,7 @@ fn odd_primes(n: u32) -> Vec<u32> {
 }
 
 fn main() {
-    let primes = odd_primes(128);
+    let primes = primes(260);
     for p in primes {
         let mut stack = VecDeque::<Integer>::new();
         let mut factors = Vec::<Integer>::new();
@@ -37,14 +37,14 @@ fn main() {
                 let mut y = Integer::from(2);
                 let mut d = Integer::from(1);
                 while d == 1 {
-                    macro_rules! rand_next {
+                    macro_rules! next {
                         ($x:expr) => {
                             ($x.pow(2) + c) % &n
                         };
                     }
-                    x = rand_next!(x);
-                    y = rand_next!(y);
-                    y = rand_next!(y);
+                    x = next!(x);
+                    y = next!(y);
+                    y = next!(y);
                     let diff = Integer::from(&x - &y).abs();
                     d = diff.gcd(&n);
                 }
