@@ -1,14 +1,9 @@
 use num_bigint::BigInt;
 use num_traits::identities::One;
 
-fn repunit(n: u32)->BigInt{
-    (BigInt::one() << n) - 1
-}
+const CRITICAL_VALUE: u32 = 2112;
 
 fn main() {
-    for i in 2..=10000 {
-        println!("{}", i);
-        let a = repunit(i);
-        let _ = &a * &a;
-    }
+    let a = (BigInt::one() << CRITICAL_VALUE) - 1;
+    let _ = &a * &a;
 }
